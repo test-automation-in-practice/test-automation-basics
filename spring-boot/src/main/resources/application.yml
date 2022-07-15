@@ -1,0 +1,29 @@
+services:
+  book-data-service:
+    base-url: "http://localhost"
+    credentials:
+      username: "username"
+      password: "password"
+
+security:
+  users:
+    basic-auth:
+      - username: "user"
+        password: "resu"
+        authorities:
+          - "SCOPE_API"
+          - "ROLE_USER"
+      - username: "curator"
+        password: "rotaruc"
+        authorities:
+          - "SCOPE_API"
+          - "ROLE_USER"
+          - "ROLE_CURATOR"
+      - username: "actuator"
+        password: "rotautca"
+        authorities:
+          - "SCOPE_ACTUATOR"
+
+spring:
+  jackson:
+    default-property-inclusion: non_null
