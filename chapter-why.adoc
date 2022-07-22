@@ -1,0 +1,45 @@
+= Why?
+
+Why should we test our code and why should those tests be automated?
+
+> Software Testing is not about finding bugs.
+It's about delivering great software.
+-- Harry Robinson
+
+Software which does not work correctly is at best bad publicity and at worst kills people.
+Any kind of testing, automated or otherwise, is done to mitigate the risk of having written _wrong_ code before letting that code loose on the world.
+
+> Instead of looking for bugs, why not focus on preventing them?
+-- Jeff Morgan
+
+Testing software after it was programmed and is already potentially shippable does not allow for the fast feedback cycles needed to continuously deliver that software to customers.
+Developers are usually busy with the next feature by the time a bug report comes in.
+Which just further delays the delivery of that version of the software.
+
+A much better approach is to test as part of programming.
+That's where automated tests come into play.
+
+Developers are very good at two things: _writing code_ and _automating boring tasks_.
+Repeatedly testing the same things manually is very boring.
+That's why developers should be intrinsically motivated to automate their testing activities.
+
+Writing automated tests during development has several key benefits:
+
+- No need to manually test what has already been automatically tested every time the software is built.
+- Executing huge amounts of tests in minutes, which would take a human tester days.
+- Having to write testable production code usually means that the code is also better structured.
+- If you have a good suite of _efficient_ automated tests, you'll never be afraid of refactoring your code to keep it maintainable long into the future.
+
+Manual testing still has its place in the software development lifecycle.
+But that place is not with testing for regression (testing everything everytime something changes to see if anything was broken).
+They are useful for:
+
+* _Explorative Testing_ on production or at least close to production systems to find bugs and potential for improvement.
+* _Approving_ of changes (e.g. user stories) to the software by qualified people (e.g. product owner, business analyst etc.) if required.
+
+Automated tests must build the backbone of your software development process though.
+Every found bug and resulting bugfix will add new automated tests to protect against regression.
+Similarly, whenever one or more missing automated tests are discovered in manual testing efforts, they need to be added as well.
+Every repeated testing must be automated!
+
+This will allow you to move faster by deploying more often, changing whatever needs to change whenever it needs to and with much more confidence.
