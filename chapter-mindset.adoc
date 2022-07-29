@@ -1,8 +1,68 @@
-= Examples of Tests
+= The Test Automation Mindset
+
+In this chapter we'll explore the mindset that we apply when thinking about what kinds of automated tests we want to implement.
+
+== Kinds of Automated Tests
+
+_Unit-_, _Component-_, _Integration-_, _System-_, _End-to-End-_, _Acceptance-_, _Behaviour-_, _Property-_, _Contract-_, _Snapshot-_, _Performance-_, _Security-_ and _Architecture-Tests_ as well as things like _Static Code Analysis_.
+
+These are a lot of labels for seemingly complex things, that actually come down to just a handful of properties:
+
+* *scope* - _"Where does the test start and where does it end?"_
+** pure function
+** class method
+** class
+** package
+** module
+** deployment unit
+** repository
+** system
+
+* *aspect under test*
+** functionality - _"Does my code do what I want it to?"_
+** integration - _"Does my code integrate with other code, framework features, technologies etc. as I intended it to?"_
+** rules - _"Does my code follow our defined rules? (e.g. architecture, security, style)"_
+** performance - _"Does my code execute as fast as I need it to?"_
+
+The goal of efficient and sustainable automated testing is to keep the following **costs** down, while still covering all relevant risks:
+
+* *implementation effort* - _"How long does it take me to initially implement the test?"_
+* *maintenance effort* - _"How often, and how much time, do I need to invest in maintaining the test?"_
+* *execution time* - _"How much time is needed to execute the test?"_
+
+By far the most important of these, for projects with long life spans, is _execution time_.
+Test suites will be run thousands of times over the life span of a project.
+Wasted minutes will accumulate to a lot of wasted time (= money) very fast.
+
+A good test suite should be executable by developers anytime they need to make sure everything still works.
+Without having to schedule a coffee break or meeting to kill time while waiting for the result.
+
+== On Labeling Tests
+
+Humans tend to put things into mental boxes in order to make sense of them.
+This also happens when we think about tests.
+As can be seen by all the different kinds of tests in the previous chapter.
+There is just one problem:
+
+_Things also tend to be more complicated and multi-faceted to just neatly fit into a box._
+
+As an example, despite all attempts to standardise terms like _Integration-Test_ whenever you start to work with new people, you'll soon learn that they have a more or less different understanding of those terms than you.
+Like spaces over tabs and other programming culture wars, this might never be resolved.
+
+The good news is that labels are effectively worthless.
+It does not matter what you call your tests.
+Whatever they do, they should do it efficiently and mitigate some relevant risk.
+The only reason to categorize your tests should be, to better communicate with your team when talking about them.
+But this should be done with the conscious knowledge that whatever labels you define, might only be valid in your team's context.
+
+Instead of wasting time arguing about how to name certain kinds of similar tests, invest that time into building common understanding about how your team wants to approach testing certain similar components.
+(e.g. how to test repositories, controllers, cached method calls, etc.)
+
+== Examples
 
 *Quick disclaimer:* As most things are identical between front and backend, the following examples rarely go into detail on which part of your application it applies to.
 
-== I want to make sure that the result of my pure function, given specific inputs, is correct.
+=== I want to make sure that the result of my pure function, given specific inputs, is correct.
 
 * **scope:**
 _function_
@@ -26,7 +86,7 @@ _extremely fast_
 The common label for this type of test is _Unit-Test_.
 Which in this case should be rather uncontroversial.
 
-== I want to make sure that my repository class' SQL statements are syntactically correct and do what I expect them to.
+=== I want to make sure that my repository class' SQL statements are syntactically correct and do what I expect them to.
 
 * **scope:**
 _class_
@@ -58,7 +118,7 @@ This specifies that its goal is to test that we are using a technology, in this 
 
 But as mentioned above, don't waste too much time labeling tests in the first place.
 
-== I want to make sure that the component responsible for talking to an HTTP API of another service runtime handles all relevant scenarios as intended.
+=== I want to make sure that the component responsible for talking to an HTTP API of another service runtime handles all relevant scenarios as intended.
 
 * **scope:**
 _class_ or _package_ (might include some function calls and helper classes as well as the main component)
@@ -85,7 +145,7 @@ The most important aspect under test here is that the actually produced HTTP req
 
 None of which is possible without using an external simulator.
 
-== I want to make sure my button triggers my logic service when pressed.
+=== I want to make sure my button triggers my logic service when pressed.
 
 * **scope:**
 _component_
@@ -106,7 +166,7 @@ The goal is to ensure that your logic is acutually triggered by a user clicking 
 
 A common label for this type of test would be _Unit-Test_. Dependent on the Framework, we could use things as Angulars TestBed, where one could argue for labeling it as an _Integration-Test_ but that's splitting hairs.
 
-== I want to make sure that my basic ui component is rendered in a consistent way.
+=== I want to make sure that my basic ui component is rendered in a consistent way.
 
 * **scope:**
 _component_ or _module_
@@ -127,7 +187,7 @@ The goal of those tests is to ensure that your rendering only changes when it is
 
 A common label for this type of test would be _Unit-Test_ or _Snapshot-Test_. Tests like those fall under the topic of _Approval Testing_.
 
-== I want to ensure that my complex rendering logic is visually stable.
+=== I want to ensure that my complex rendering logic is visually stable.
 
 * **scope:**
 _deployment unit_
@@ -148,7 +208,7 @@ We want to focus on the complex rendering logic and thus isolate the important p
 
 A common label for this type of test would be _End-to-End-Test_ or _Visual-Regression-Test_. Tests like those fall under the topic of _Approval Testing_ but with images instead of text as a base line.
 
-== I want to make sure my state management handles changes appropriately.
+=== I want to make sure my state management handles changes appropriately.
 
 * **scope:**
 _module_
@@ -170,7 +230,7 @@ As we want to ensure that our state management is handled correctly, only mock s
 
 A common label for this type of test would be _Unit-Test_ or _Integration-Test_. But as the integration is provided with mock libraries for popular state management solutions, most would argue for _Unit-Test_.
 
-== I want to make sure my callbacks for asynchronous timers doing the right thing at the appropriate time.
+=== I want to make sure my callbacks for asynchronous timers doing the right thing at the appropriate time.
 
 * **scope:**
 _function_ or _class_
@@ -192,7 +252,7 @@ This is done by simulating time progression to a certain point and check whether
 
 A common label for this type of test would be _Unit-Test_.
 
-== I want to make sure that an orchestrating service class behaves like it should even when exceptions occur.
+=== I want to make sure that an orchestrating service class behaves like it should even when exceptions occur.
 
 * **scope:**
 _class_
@@ -220,7 +280,7 @@ If your static code needs mocking because of some kind of state, then that's bad
 Tests usually involve checking that the correct parts of the input data are given to the dependencies and that their results are in turn used correctly in the following steps.
 If there are side effects (e.g. publishing of events) in the component's code, their invocation is also tested.
 
-== I want to make sure that security rules, like the way a user is authenticated, for certain paths of my HTTP-based API are enforced.
+=== I want to make sure that security rules, like the way a user is authenticated, for certain paths of my HTTP-based API are enforced.
 
 * **scope:**
 _deployment unit_
@@ -243,7 +303,7 @@ Bootstrapping the _deployment unit_ to start with the minimum set of components,
 The goal is to test that certain security rules are applied for parts of an API using a certain authentication technology.
 The security framework, the authentication protocols and HTTP as a transport layer are all technologies being integrated with your own code.
 
-== I want to make sure two of my service runtimes can talk to each other over HTTP and messages.
+=== I want to make sure two of my service runtimes can talk to each other over HTTP and messages.
 
 * **scope:**
 _deployment units_
@@ -269,7 +329,7 @@ This is an excellent example how knowing the scope and different aspects of what
 Practices like having contracts for testing the integration of separate deployment units might just mitigate 90% of the risk.
 But they are much more efficient than full integration tests which might mitigate 92% of the risk
 
-== I want to make sure that a specific part of my user journey works with front- and backend involved.
+=== I want to make sure that a specific part of my user journey works with front- and backend involved.
 
 * **scope:**
 _deployment unit(s)_
@@ -292,7 +352,7 @@ Running against a simulation on the other hand is very fast.
 
 The goal of this test is not to test that your database in the backend saves your data as expected but to test that your user journey works. Decoupling different deployment units (e.g. via contract-based tests), helps with that and enables simulating any backend calls as the communication is tested on other levels. This will decrease both implementation and maintenance complexity.
 
-== I want to make sure, that certain architectural principals are followed in our codebase.
+=== I want to make sure, that certain architectural principals are followed in our codebase.
 
 * **scope:**
 _modules_ / _deployment unit_ / _repository_

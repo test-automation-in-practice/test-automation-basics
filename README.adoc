@@ -3,8 +3,7 @@
 *Chapters*
 
 * link:chapter-why.adoc[Why automate tests?]
-* link:chapter-how.adoc[How to go about it?]
-* link:chapter-examples.adoc[Examples]
+* link:chapter-mindset.adoc[The Test Automation Mindset]
 * Languages:
 ** link:chapter-angular.adoc[Angular/TypeScript]
 ** link:chapter-kotlin.adoc[Kotlin/JVM]
