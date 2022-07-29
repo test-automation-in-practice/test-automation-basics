@@ -1,0 +1,45 @@
+= Workshop: Spring Boot Test Automation for Beginners
+
+== Presenter Notes
+
+* Introduction (5m) 
+* Test Automation Motivation & Mindset (20m)
+** content from "Why" & "Mindset" chapters
+* Short Break (5m)
+* Overview of the Production Code (10m)
+** diagrams for high-level overview
+** package structure to understand the architecture
+** show relevant classes / functions for this workshop
+* Automated Test #1 (30m)
+** pick one of the model classes with actual code in it (`Isbn` or `NumberOfPages`)
+** implement first positive test
+** implement second positive test - having one working example does not prove anything
+** introduce / talk about "thinking in boundaries"
+** implement first negative test
+** implement additional negative tests until enough boundaries are tested
+** talk about "when are there enough tests?"
+** refactor tests into two parameterized tests to show how to reduce test code
+* Discussion Break (10m)
+* Automated Test #2 (40m)
+** pick a core business function of `BookCollection` (e.g. `addBook(...)`)
+** talk about what that function does and what dependencies and side effect there are
+** bootstrap the test class by initializing the class under test and its dependencies
+** introduce the concept of mocking and that there are multiple possible frameworks to use
+** implement first test focusing on validating the result of the function
+** test should fail to demonstrate, that behavior has to be defined in order to execute the function
+** fix test by adding behaviour for mocks
+** implement next tests by copying the first one and validating the side effects instead of the result
+** there should be a lot of duplicated mock definition code
+** introduce JUnit life cycle and implement a `@BeforeEach` method defining default mock behaviour
+* Discussion Break (10m)
+* Automated Test #3 (45m)
+** present the corresponding REST endpoint in the `BooksController`
+** talk about what the job of a rest controller is - translate HTTP/framework to our business logic
+** talk about what could be tested on a "unit" level - translation code
+** talk about what needs to be tested on an "integration" level - status code, errors, JSON (de-)serialization etc.
+** talk about why in this case, the "unit" test would be redundant and does not need to be written
+** introduction to `@WebMvcTest` and the concept of "slicing" your application context in separately testable parts
+** write a test using `MockMvc` to define a request and expected response and mocking the `BookCollection's` behaviour
+** deal with spring security related issues - `@WithMockUser` etc.
+** write a second test whose request will lead to a validation error
+* Ending Discussion / "What We've Learned" (15m)
