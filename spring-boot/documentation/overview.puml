@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+'components
+
+()HTTP
+
+package "Books" {
+	[BookController]
+	[BookCollection]
+	[BookRepository]
+	[BookEventPublisher]
+}
+
+package "Enrichment" {
+	[EnrichAddedBookEventListener]
+	[BookEnrichmentDataRepository]
+}
+
+'relationships
+HTTP -> [BookController]
+
+[BookController] --> [BookCollection]
+[BookCollection] --> [BookRepository]
+[BookCollection] --> [BookEventPublisher]
+
+[BookEventPublisher] .- [EnrichAddedBookEventListener]
+
+[EnrichAddedBookEventListener] --> [BookEnrichmentDataRepository]
+[EnrichAddedBookEventListener] ---> [BookRepository]
+
+@enduml
