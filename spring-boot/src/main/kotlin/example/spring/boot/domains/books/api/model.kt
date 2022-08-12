@@ -8,6 +8,15 @@ import example.spring.boot.domains.books.model.primitives.Isbn
 import example.spring.boot.domains.books.model.primitives.Title
 import java.util.UUID
 
+/**
+ * Data structure used as external representation of the internal model.
+ *
+ * @property id see [Book.id]
+ * @property data see [Book.data]
+ * @property available whether this book is currently available based on its internal status
+ * @property borrowed if this book is currently borrowed to someone, this will contain data about that.
+ * Will only be visible to _curator_ users.
+ */
 data class BookRepresentation(
     val id: UUID,
     val data: BookData,

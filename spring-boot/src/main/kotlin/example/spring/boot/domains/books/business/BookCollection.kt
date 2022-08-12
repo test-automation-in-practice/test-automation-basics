@@ -1,5 +1,8 @@
 package example.spring.boot.domains.books.business
 
+import arrow.core.Either
+import arrow.core.Either.Left
+import arrow.core.Either.Right
 import example.spring.boot.domains.books.model.Book
 import example.spring.boot.domains.books.model.BookData
 import example.spring.boot.domains.books.model.Roles.CURATOR
@@ -18,6 +21,10 @@ import java.time.Clock
 import java.util.UUID
 import javax.annotation.security.RolesAllowed
 
+/**
+ * This is THE central component of the _books_ domain. It provides all kinds of interactions with the managed books.
+ * In addition, it is also responsible for enforcing security requirements for its functions.
+ */
 @Service
 class BookCollection(
     private val repository: BookRepository,
@@ -28,6 +35,10 @@ class BookCollection(
 
     private val log = getLogger(javaClass)
 
+    /**
+     * Creates a new [Book] with the given [BookData] and returns it.
+     * Produces a [BookAddedEvent].
+     */
     @RolesAllowed(CURATOR)
     fun addBook(data: BookData): Book {
         log.info("creating new book [$data]")
@@ -43,6 +54,10 @@ class BookCollection(
         eventPublisher.publish(BookAddedEvent(book))
     }
 
+    /**
+     * Tries to get a [Book] by its ID.
+     * Returns `null` if no such [Book] exists.
+     */
     @RolesAllowed(USER)
     fun getBook(id: UUID): Book? {
         log.info("looking up book with ID [$id]")
@@ -54,35 +69,65 @@ class BookCollection(
         return book
     }
 
+    /**
+     * Tries to borrow a [Book] by its ID.
+     * Returns a failure if there is no such [Book] or it is not in a borrowable state.
+     * Produces a [BookBorrowedEvent].
+     */
     @RolesAllowed(USER)
-    fun borrowBook(id: UUID, borrower: Borrower): Book? {
+    fun borrowBook(id: UUID, borrower: Borrower): Either<BookFailure, Book> {
         log.info("borrowing book with ID [$id]")
         val newState = Borrowed(by = borrower, at = clock.instant())
-        val updatedBook = repository.update(id) { book ->
-            book.changeState(newState)
+
+        val updatedBook = try { // TODO make better
+            repository.update(id) { book -> book.changeState(newState) }
+        } catch (e: IllegalStateException) {
+            return Left(BookUpdateFailed)
         }
-        publishBorrowedEvent(updatedBook)
-        return updatedBook
+
+        return if (updatedBook != null) {
+            publishBorrowedEvent(updatedBook)
+            Right(updatedBook)
+        } else {
+            Left(BookNotFound)
+        }
     }
 
-    private fun publishBorrowedEvent(book: Book?) {
-        if (book != null) eventPublisher.publish(BookBorrowedEvent(book))
+    private fun publishBorrowedEvent(book: Book) {
+        eventPublisher.publish(BookBorrowedEvent(book))
     }
 
+    /**
+     * Tries to return a [Book] by its ID.
+     * Returns a failure if there is no such [Book] or it is not in a returnable state.
+     * Produces a [BookReturnedEvent].
+     */
     @RolesAllowed(USER)
-    fun returnBook(id: UUID): Book? {
+    fun returnBook(id: UUID): Either<BookFailure, Book> {
         log.info("returning book with ID [$id]")
-        val updatedBook = repository.update(id) { book ->
-            book.changeState(Available)
+
+        val updatedBook = try { // TODO make better
+            repository.update(id) { book -> book.changeState(Available) }
+        } catch (e: IllegalStateException) {
+            return Left(BookUpdateFailed)
         }
-        publishReturnedEvent(updatedBook)
-        return updatedBook
+
+        return if (updatedBook != null) {
+            publishReturnedEvent(updatedBook)
+            Right(updatedBook)
+        } else {
+            Left(BookNotFound)
+        }
     }
 
-    private fun publishReturnedEvent(book: Book?) {
-        if (book != null) eventPublisher.publish(BookReturnedEvent(book))
+    private fun publishReturnedEvent(book: Book) {
+        eventPublisher.publish(BookReturnedEvent(book))
     }
 
+    /**
+     * Tries to delete a [Book] by its ID.
+     * Produces a [BookDeletedEvent] if the book was actually deleted.
+     */
     @RolesAllowed(CURATOR)
     fun deleteBook(id: UUID) {
         log.info("deleting book with ID [$id]")
@@ -91,6 +136,7 @@ class BookCollection(
                 publishDeletedEvent(id)
                 log.debug("book successfully deleted")
             }
+
             else -> log.warn("there is no book with ID [$id] - did not deleted anything")
         }
     }

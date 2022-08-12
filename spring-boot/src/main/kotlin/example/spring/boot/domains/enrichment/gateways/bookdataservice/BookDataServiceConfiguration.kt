@@ -1,4 +1,4 @@
-package example.spring.boot.gateways.bookdataservice
+package example.spring.boot.domains.enrichment.gateways.bookdataservice
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.Cache

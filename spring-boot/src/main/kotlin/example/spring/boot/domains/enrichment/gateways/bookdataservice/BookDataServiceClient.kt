@@ -1,19 +1,20 @@
-package example.spring.boot.gateways.bookdataservice
+package example.spring.boot.domains.enrichment.gateways.bookdataservice
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import example.spring.boot.common.http.BasicAuthInterceptor
 import example.spring.boot.domains.books.model.primitives.Author
 import example.spring.boot.domains.books.model.primitives.Isbn
 import example.spring.boot.domains.books.model.primitives.NumberOfPages
 import example.spring.boot.domains.enrichment.business.BookEnrichmentDataRepository
 import example.spring.boot.domains.enrichment.model.EnrichmentData
+import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -25,15 +26,14 @@ class BookDataServiceClient(
 
     private val log = getLogger(javaClass)
     private val objectMapper = jacksonObjectMapper()
-    private val client: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authorizationInterceptor(properties))
-        .build()
+    private val client: OkHttpClient = OkHttpClient()
 
     @Cacheable("book-data-service", unless = "#result == null")
     override fun getByIsbn(isbn: Isbn): EnrichmentData? {
         val url = properties.url("/api/books/$isbn")
         val request = Request.Builder()
             .header(ACCEPT, APPLICATION_JSON_VALUE)
+            .header(AUTHORIZATION, basicAuthHeader())
             .get().url(url)
             .build()
 
@@ -51,6 +51,9 @@ class BookDataServiceClient(
             }
     }
 
+    private fun basicAuthHeader() =
+        Credentials.basic(properties.credentials.username, properties.credentials.password)
+
     private fun readEnrichmentData(isbn: Isbn, response: Response): EnrichmentData {
         val data = objectMapper.readValue<ResponseBody>(response.body!!.byteStream())
         return EnrichmentData(
@@ -62,9 +65,6 @@ class BookDataServiceClient(
 
     private fun readBodyAsString(response: Response): String =
         response.body?.string() ?: ""
-
-    private fun authorizationInterceptor(properties: BookDataServiceProperties): BasicAuthInterceptor =
-        BasicAuthInterceptor(username = properties.credentials.username, password = properties.credentials.password)
 
     private data class ResponseBody(val pages: Int?, val authors: Set<Author>?) {
         data class Author(val id: UUID, val name: String)

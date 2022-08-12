@@ -20,6 +20,12 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
 
+/**
+ * Enable general web security filters.
+ * These manage the principle ability of a given user to make requests on certain resources.
+ *
+ * In a separate configuration class in order to be able to selectively activate this in tests.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(UsersProperties::class)
@@ -27,8 +33,9 @@ class WebSecurityConfiguration {
 
     private val passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
 
+    /** Configuration for any `/api` resources. */
     @Bean
-    @Order(101)
+    @Order(101) // highest priority
     fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             securityMatcher("/api/**")
@@ -43,8 +50,9 @@ class WebSecurityConfiguration {
         return http.build()
     }
 
+    /** Configuration for any `/actuator` resources. */
     @Bean
-    @Order(102)
+    @Order(102) // slightly lower priority
     fun actuatorSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             securityMatcher(toAnyEndpoint())
@@ -60,8 +68,9 @@ class WebSecurityConfiguration {
         return http.build()
     }
 
+    /** Configuration for any other resources. */
     @Bean
-    @Order(199)
+    @Order(199) // lowest priority
     fun generalSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             securityMatcher("/**")
@@ -77,12 +86,13 @@ class WebSecurityConfiguration {
     }
 
     private fun HttpSecurityDsl.defaults() {
-        cors { disable() }
-        csrf { disable() }
+        cors { disable() } // not needed for this showcase
+        csrf { disable() } // not needed for this showcase
         headers { cacheControl {} }
-        sessionManagement { sessionCreationPolicy = STATELESS }
+        sessionManagement { sessionCreationPolicy = STATELESS } // do not create sessions
     }
 
+    /** In-memory user manager based on configuration properties used for basic-authentication. */
     @Bean
     fun inMemoryUserDetailsManager(properties: UsersProperties): InMemoryUserDetailsManager {
         val users = properties.basicAuth.map { user ->
