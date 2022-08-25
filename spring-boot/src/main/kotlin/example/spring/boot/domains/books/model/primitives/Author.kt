@@ -1,4 +1,9 @@
 package example.spring.boot.domains.books.model.primitives
 
-@JvmInline
-value class Author(val value: String)
+import com.fasterxml.jackson.annotation.JsonValue
+
+data class Author(
+    @JsonValue private val value: String
+) {
+    override fun toString() = value
+}

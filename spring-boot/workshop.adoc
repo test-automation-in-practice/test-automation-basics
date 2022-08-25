@@ -1,5 +1,15 @@
 = Workshop: Spring Boot Test Automation for Beginners
 
+== Resources
+
+* Novatec
+** https://www.novatec-gmbh.de/en/blog/kotlin-assertion-libraries-introduction/
+* Other
+** https://martinfowler.com/articles/mocksArentStubs.html
+** https://martinfowler.com/bliki/TestCoverage.html
+** https://martinfowler.com/articles/practical-test-pyramid.html
+** https://martinfowler.com/testing/
+
 == Presenter Notes
 
 * Introduction (5m) 
@@ -43,3 +53,82 @@
 ** deal with spring security related issues - `@WithMockUser` etc.
 ** write a second test whose request will lead to a validation error
 * Ending Discussion / "What We've Learned" (15m)
+
+=== Excerpts
+
+=== Why?
+
+Why should we test our code and why should those tests be automated?
+
+> Software Testing is not about finding bugs.
+It's about delivering great software.
+-- Harry Robinson
+
+Software which does not work correctly is at best bad publicity and at worst kills people.
+Any kind of testing, automated or otherwise, is done to mitigate the risk of having written _wrong_ code before letting that code loose on the world.
+
+> Instead of looking for bugs, why not focus on preventing them?
+-- Jeff Morgan
+
+Testing software after it was programmed and is already potentially shippable does not allow for the fast feedback cycles needed to continuously deliver that software to customers.
+Developers are usually busy with the next feature by the time a bug report comes in.
+Which just further delays the delivery of that version of the software.
+
+A much better approach is to test as part of programming.
+That's where automated tests come into play.
+= The Test Automation Mindset
+
+In this chapter we'll explore the mindset that we apply when thinking about what kinds of automated tests we want to implement.
+
+=== Kinds of Automated Tests
+
+_Unit-_, _Component-_, _Integration-_, _System-_, _End-to-End-_, _Acceptance-_, _Behaviour-_, _Property-_, _Contract-_, _Snapshot-_, _Performance-_, _Security-_ and _Architecture-Tests_ as well as things like _Static Code Analysis_.
+
+These are a lot of labels for seemingly complex things, that actually come down to just a handful of properties:
+
+* *scope* - _"Where does the test start and where does it end?"_
+** function
+** class
+** module
+** deployment unit
+** etc.
+
+* *aspect under test*
+** functionality - _"Does my code do what I want it to?"_
+** integration - _"Does my code integrate with other code, framework features, technologies etc. as I intended it to?"_
+** rules - _"Does my code follow our defined rules? (e.g. architecture, security, style)"_
+** performance - _"Does my code execute as fast as I need it to?"_
+
+The goal of efficient and sustainable automated testing is to keep the following **costs** down, while still covering all relevant risks:
+
+* *implementation effort* - _"How long does it take me to initially implement the test?"_
+* *maintenance effort* - _"How often, and how much time, do I need to invest in maintaining the test?"_
+* *execution time* - _"How much time is needed to execute the test?"_
+
+By far the most important of these, for projects with long life spans, is _execution time_.
+Test suites will be run thousands of times over the life span of a project.
+Wasted minutes will accumulate to a lot of wasted time (= money) very fast.
+
+A good test suite should be executable by developers anytime they need to make sure everything still works.
+Without having to schedule a coffee break or meeting to kill time while waiting for the result.
+
+=== On Labeling Tests
+
+Humans tend to put things into mental boxes in order to make sense of them.
+This also happens when we think about tests.
+As can be seen by all the different kinds of tests in the previous chapter.
+There is just one problem:
+
+_Things also tend to be more complicated and multi-faceted to just neatly fit into a box._
+
+As an example, despite all attempts to standardise terms like _Integration-Test_ whenever you start to work with new people, you'll soon learn that they have a more or less different understanding of those terms than you.
+Like spaces over tabs and other programming culture wars, this might never be resolved.
+
+The good news is that labels are effectively worthless.
+It does not matter what you call your tests.
+Whatever they do, they should do it efficiently and mitigate some relevant risk.
+The only reason to categorize your tests should be, to better communicate with your team when talking about them.
+But this should be done with the conscious knowledge that whatever labels you define, might only be valid in your team's context.
+
+Instead of wasting time arguing about how to name certain kinds of similar tests, invest that time into building common understanding about how your team wants to approach testing certain similar components.
+(e.g. how to test repositories, controllers, cached method calls, etc.)

@@ -1,4 +1,9 @@
 package example.spring.boot.domains.books.model.primitives
 
-@JvmInline
-value class Borrower(val value: String)
+import com.fasterxml.jackson.annotation.JsonValue
+
+data class Borrower(
+    @JsonValue private val value: String
+) {
+    override fun toString() = value
+}

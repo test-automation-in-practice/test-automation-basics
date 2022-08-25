@@ -1,6 +1,7 @@
 package example.spring.boot.domains.books.api
 
 import arrow.core.getOrHandle
+import example.spring.boot.common.security.Authorities.ROLE_CURATOR
 import example.spring.boot.domains.books.business.BookCollection
 import example.spring.boot.domains.books.business.BookNotFound
 import example.spring.boot.domains.books.business.BookUpdateFailed
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.http.ResponseEntity.status
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,8 +33,6 @@ class BooksController(
     private val collection: BookCollection
 ) {
 
-    private val includeBorrowed = true // TODO make role dependent
-
     /**
      * Create a new _Book_ based on the provided data.
      *
@@ -43,7 +43,7 @@ class BooksController(
     fun addBook(@RequestBody request: AddBookRequest): BookRepresentation {
         val bookData = BookData(isbn = request.isbn, title = request.title)
         val book = collection.addBook(bookData)
-        return book.toRepresentation(includeBorrowed)
+        return book.toRepresentation(userIsCurator())
     }
 
     /**
@@ -55,7 +55,7 @@ class BooksController(
     @GetMapping("/{id}")
     fun getBookById(@PathVariable id: UUID): ResponseEntity<BookRepresentation> {
         val book = collection.getBook(id = id) ?: return notFound().build()
-        val representation = book.toRepresentation(includeBorrowed)
+        val representation = book.toRepresentation(userIsCurator())
         return ok(representation)
     }
 
@@ -72,7 +72,7 @@ class BooksController(
         @RequestBody request: BorrowBookRequest
     ): ResponseEntity<BookRepresentation> =
         collection.borrowBook(id = id, borrower = request.borrower)
-            .map { it.toRepresentation(includeBorrowed) }
+            .map { it.toRepresentation(userIsCurator()) }
             .map { ok(it) }
             .getOrHandle { failure ->
                 when (failure) {
@@ -91,7 +91,7 @@ class BooksController(
     @PostMapping("/{id}/return")
     fun returnBookById(@PathVariable id: UUID): ResponseEntity<BookRepresentation> =
         collection.returnBook(id = id)
-            .map { it.toRepresentation(includeBorrowed) }
+            .map { it.toRepresentation(userIsCurator()) }
             .map { ok(it) }
             .getOrHandle { failure ->
                 when (failure) {
@@ -110,5 +110,8 @@ class BooksController(
     fun deleteBookById(@PathVariable id: UUID) {
         collection.deleteBook(id = id)
     }
+
+    fun userIsCurator(): Boolean =
+        SecurityContextHolder.getContext().authentication.authorities.any { it.authority == ROLE_CURATOR }
 
 }

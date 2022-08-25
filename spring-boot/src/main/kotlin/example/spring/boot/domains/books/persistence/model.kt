@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 import java.util.UUID
 
-@Document(collation = "books")
+@Document(collection = "books")
 data class BookDocument(
     @Id
     val id: UUID,
