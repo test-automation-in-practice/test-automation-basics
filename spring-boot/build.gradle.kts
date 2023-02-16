@@ -1,3 +1,4 @@
+import org.gradle.api.file.DuplicatesStrategy.INCLUDE
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -35,14 +36,21 @@ dependencies {
     testImplementation("io.rest-assured:kotlin-extensions:4.5.1") // sadly not managed by Spring
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
-        javaParameters = true
-    }
-}
+tasks {
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+    withType<Copy> { duplicatesStrategy = INCLUDE }
+    withType<Jar> { duplicatesStrategy = INCLUDE }
+
+    withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "17"
+            javaParameters = true
+        }
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+    }
+
 }
