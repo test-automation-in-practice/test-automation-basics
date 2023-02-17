@@ -137,7 +137,7 @@ class BookCollection(
                 log.debug("book successfully deleted")
             }
 
-            else -> log.warn("there is no book with ID [$id] - did not deleted anything")
+            false -> log.warn("there is no book with ID [$id] - did not deleted anything")
         }
     }
 

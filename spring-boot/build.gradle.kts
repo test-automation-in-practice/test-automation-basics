@@ -31,6 +31,9 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.ninja-squad:springmockk:3.1.1")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
+    testImplementation("io.github.logrecorder:logrecorder-assertions:2.5.1")
+    testImplementation("io.github.logrecorder:logrecorder-junit5:2.5.1")
+    testImplementation("io.github.logrecorder:logrecorder-logback:2.5.1")
     testImplementation("io.mockk:mockk:1.12.4")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:kotlin-extensions:4.5.1") // sadly not managed by Spring
