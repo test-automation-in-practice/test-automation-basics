@@ -1,0 +1,17 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+package ports_and_adapters {
+	[api]
+	package core {
+		[business]
+		[model]
+	}
+	[persistence]
+}
+
+[api] --> [business]
+[business] -> [model]
+[business] <-- [persistence]
+
+@enduml
