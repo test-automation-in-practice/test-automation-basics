@@ -1,0 +1,61 @@
+### Create a Book
+POST {{url}}/api/books
+Authorization: {{curator-auth}}
+Content-Type: application/json
+
+{
+    "isbn": "1234567890",
+    "title": "Clean Code"
+}
+
+> {%
+    client.global.set("clean-code", response.body["id"]);
+%}
+
+
+
+
+### Borrow a Book
+POST {{url}}/api/books/{{clean-code}}/borrow
+Authorization: {{user-auth}}
+Content-Type: application/json
+
+{
+  "borrower": "Gandalf"
+}
+
+
+
+
+### Return a Book
+POST {{url}}/api/books/{{clean-code}}/return
+Authorization: {{user-auth}}
+Content-Type: application/json
+
+
+
+
+### Create Cover
+PUT localhost:8080/api/books/{{clean-code}}/cover
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: {{curator-auth}}
+
+--boundary
+Content-Disposition: form-data; name="cover"; filename="mythical-man-month.jpg"
+Content-Type: image/jpeg
+
+< ../../src/main/resources/bookcovers/clean_code.jpg
+
+
+
+
+### Get Clean Code Cover
+GET {{url}}/api/books/{{clean-code}}/cover
+Authorization: {{user-auth}}
+
+
+
+
+### Get Fellowship of the Ring Cover
+GET {{url}}/api/books/{{fellowship-of-the-ring}}/cover
+Authorization: {{user-auth}}

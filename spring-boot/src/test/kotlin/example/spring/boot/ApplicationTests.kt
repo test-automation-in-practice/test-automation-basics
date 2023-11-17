@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit.SECONDS
 import java.util.UUID
@@ -31,6 +32,12 @@ import arrow.core.Either.Right as success
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@ContextConfiguration(
+    initializers = [
+        S3Initializer::class,
+        MongoDBInitializer::class,
+    ]
+)
 class ApplicationTests {
 
     @LocalServerPort

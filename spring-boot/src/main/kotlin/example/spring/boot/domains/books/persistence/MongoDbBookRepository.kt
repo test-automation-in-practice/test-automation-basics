@@ -37,12 +37,11 @@ class MongoDbBookRepository(
         val document = repository.findById(id).orElse(null) ?: return null
         val updatedBook = block(document.toBook())
 
-        val updatedDocument = document
-            .copy(
-                data = updatedBook.data,
-                borrowed = updatedBook.state as? Borrowed,
-                lastUpdated = clock.instant()
-            )
+        val updatedDocument = document.copy(
+            data = updatedBook.data,
+            borrowed = updatedBook.state as? Borrowed,
+            lastUpdated = clock.instant()
+        )
         val savedDocument = repository.save(updatedDocument)
 
         return savedDocument.toBook()
