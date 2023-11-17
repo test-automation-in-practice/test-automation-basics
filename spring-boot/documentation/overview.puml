@@ -1,15 +1,19 @@
 @startuml
+!theme cerulean
 'https://plantuml.com/component-diagram
-
-'components
 
 ()HTTP
 
 package "Books" {
 	[BookController]
 	[BookCollection]
+	[BookCoverService]
 	[BookRepository]
 	[BookEventPublisher]
+}
+
+database "AWS" {
+    [S3]
 }
 
 package "Enrichment" {
@@ -18,11 +22,13 @@ package "Enrichment" {
 }
 
 'relationships
-HTTP -> [BookController]
+HTTP -d-> [BookController]
 
 [BookController] --> [BookCollection]
+[BookController] --> [BookCoverService]
 [BookCollection] --> [BookRepository]
 [BookCollection] --> [BookEventPublisher]
+[BookCoverService] --> [S3]
 
 [BookEventPublisher] .- [EnrichAddedBookEventListener]
 

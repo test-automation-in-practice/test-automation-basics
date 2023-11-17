@@ -1,10 +1,8 @@
 package example.spring.boot.domains.enrichment.gateways.bookdataservice
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import java.net.URL
 
-@ConstructorBinding
 @ConfigurationProperties("services.book-data-service")
 data class BookDataServiceProperties(
     val baseUrl: URL,
@@ -14,6 +12,5 @@ data class BookDataServiceProperties(
     fun url(path: String): URL =
         baseUrl.toURI().resolve(path).toURL()
 
-    @ConstructorBinding
     data class Credentials(val username: String, val password: String)
 }

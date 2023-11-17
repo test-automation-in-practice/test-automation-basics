@@ -14,12 +14,12 @@ import example.spring.boot.domains.books.model.events.BookBorrowedEvent
 import example.spring.boot.domains.books.model.events.BookDeletedEvent
 import example.spring.boot.domains.books.model.events.BookReturnedEvent
 import example.spring.boot.domains.books.model.primitives.Borrower
+import jakarta.annotation.security.RolesAllowed
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.stereotype.Service
 import org.springframework.util.IdGenerator
 import java.time.Clock
-import java.util.UUID
-import javax.annotation.security.RolesAllowed
+import java.util.*
 
 /**
  * This is THE central component of the _books_ domain. It provides all kinds of interactions with the managed books.
@@ -46,7 +46,7 @@ class BookCollection(
         val book = Book(id = id, data = data)
         repository.insert(book)
         publishAddedEvent(book)
-        log.debug("book with ID [$id] was created")
+        log.debug("book with ID [{}] was created", id)
         return book
     }
 
@@ -63,8 +63,8 @@ class BookCollection(
         log.info("looking up book with ID [$id]")
         val book = repository.get(id)
         when (book) {
-            null -> log.debug("book with ID [$id] not found")
-            else -> log.debug("book with ID [$id] found")
+            null -> log.debug("book with ID [{}] not found", id)
+            else -> log.debug("book with ID [{}] found", id)
         }
         return book
     }
@@ -79,7 +79,7 @@ class BookCollection(
         log.info("borrowing book with ID [$id]")
         val newState = Borrowed(by = borrower, at = clock.instant())
 
-        val updatedBook = try { // TODO make better
+        val updatedBook: Book? = try {
             repository.update(id) { book -> book.changeState(newState) }
         } catch (e: IllegalStateException) {
             return Left(BookUpdateFailed)
@@ -106,7 +106,7 @@ class BookCollection(
     fun returnBook(id: UUID): Either<BookFailure, Book> {
         log.info("returning book with ID [$id]")
 
-        val updatedBook = try { // TODO make better
+        val updatedBook = try {
             repository.update(id) { book -> book.changeState(Available) }
         } catch (e: IllegalStateException) {
             return Left(BookUpdateFailed)
