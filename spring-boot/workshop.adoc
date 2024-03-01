@@ -12,7 +12,7 @@
 
 == Presenter Notes
 
-* Introduction (5m) 
+* Introduction (5m)
 * Test Automation Motivation & Mindset (20m)
 ** content from "Why" & "Mindset" chapters
 * Short Break (5m)
@@ -54,6 +54,40 @@
 ** write a second test whose request will lead to a validation error
 * Ending Discussion / "What We've Learned" (15m)
 
+== Individual Workshops
+
+The module is sliced into three parts, with an individual workshop for each, designed for lasting roughly half a day.
+They take place over the course of an entire year, increasing in difficulty and complexity just as the participants
+gain more knowledge and experience over time.
+
+=== Part 1
+
+This first part familiarizes the students with the motivation and mindset behind automated testing.
+
+On the practical side it introduces the small Spring Boot application that will be used throughout the entire module
+and then guides the students through the process of writing their first automated tests for it. At first with simple
+value objects whose entire business domain is restricted to a single range check, then with core business functionality
+that has dependencies, which serves as an introduction to mocking and test slicing.
+
+=== Part 2
+
+The second part builds upon the knowledge gained in Part 1 and shows the limits of mere Unit Testing due to incoming
+or outgoing dependence on external technologies or services (e.g. REST apis, databases, security or other applications).
+
+In this chapter we explore the tools and techniques to deal with such dependencies (like `MockMvc` and `DataJpa` tests)
+as well as their trade-offs and limitations (e.g. in-memory vs dockerized databases).
+
+=== Part 3
+
+The final chapter does not introduce any new material, but instead presents the students with a scenario that they are
+likely to encounter in an actual customer project - an extensive and (mostly) functional, but very badly written, test
+suite.
+
+The students' task will be to refactor the test suite to a proper standard of quality by drawing on all the knowledge
+they have gained throughout parts 1 and 2 of the module. In this task they will face a number of typical problems,
+bad practices and anti-patterns, including from incoherent naming, bad structure, unnecessary repetition, excessive
+inheritance, use of wrong libraries
+
 === Excerpts
 
 === Why?
@@ -65,24 +99,27 @@ It's about delivering great software.
 -- Harry Robinson
 
 Software which does not work correctly is at best bad publicity and at worst kills people.
-Any kind of testing, automated or otherwise, is done to mitigate the risk of having written _wrong_ code before letting that code loose on the world.
+Any kind of testing, automated or otherwise, is done to mitigate the risk of having written _wrong_ code before letting
+that code loose on the world.
 
 > Instead of looking for bugs, why not focus on preventing them?
 -- Jeff Morgan
 
-Testing software after it was programmed and is already potentially shippable does not allow for the fast feedback cycles needed to continuously deliver that software to customers.
-Developers are usually busy with the next feature by the time a bug report comes in.
-Which just further delays the delivery of that version of the software.
+Testing software after it was programmed and is already potentially shippable does not allow for the fast feedback
+cycles needed to continuously deliver that software to customers. Developers are usually busy with the next feature by
+the time a bug report comes in. Which just further delays the delivery of that version of the software.
 
 A much better approach is to test as part of programming.
 That's where automated tests come into play.
 = The Test Automation Mindset
 
-In this chapter we'll explore the mindset that we apply when thinking about what kinds of automated tests we want to implement.
+In this chapter we'll explore the mindset that we apply when thinking about what kinds of automated tests we want to
+implement.
 
 === Kinds of Automated Tests
 
-_Unit-_, _Component-_, _Integration-_, _System-_, _End-to-End-_, _Acceptance-_, _Behaviour-_, _Property-_, _Contract-_, _Snapshot-_, _Performance-_, _Security-_ and _Architecture-Tests_ as well as things like _Static Code Analysis_.
+_Unit-_, _Component-_, _Integration-_, _System-_, _End-to-End-_, _Acceptance-_, _Behaviour-_, _Property-_, _Contract-_,
+_Snapshot-_, _Performance-_, _Security-_ and _Architecture-Tests_ as well as things like _Static Code Analysis_.
 
 These are a lot of labels for seemingly complex things, that actually come down to just a handful of properties:
 
